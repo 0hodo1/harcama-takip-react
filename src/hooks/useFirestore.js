@@ -1,6 +1,12 @@
 import { useEffect, useState, useReducer } from "react";
 import { db } from "../firebase/config";
-import { collection, addDoc, serverTimestamp } from "@firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  deleteDoc,
+} from "@firebase/firestore";
 
 const startData = {
   doc: null,
@@ -32,6 +38,13 @@ const firestoreReducer = (state, action) => {
         success: false,
         loading: false,
       };
+    case "DOC_DELETED":
+      return {
+        error: null,
+        doc: null,
+        success: true,
+        loading: false,
+      };
     default:
       return state;
   }
@@ -58,7 +71,20 @@ export const useFirestore = (col) => {
     }
   };
 
-  const deleteDoc = async (id) => {};
+  const deletedDoc = async (id) => {
+    dispatch({ type: "WAITING" });
+    try {
+      let ref = doc(db, col, id);
+      await deleteDoc(ref);
+      if (!cancel) {
+        dispatch({ type: "DOC_DELETED" });
+      }
+    } catch (error) {
+      if (!cancel) {
+        dispatch({ type: "ERROR", payload: error.message });
+      }
+    }
+  };
 
   useEffect(() => {
     return () => setCancel(true);
@@ -66,7 +92,7 @@ export const useFirestore = (col) => {
 
   return {
     addingDoc,
-    deleteDoc,
+    deletedDoc,
     response,
   };
 };

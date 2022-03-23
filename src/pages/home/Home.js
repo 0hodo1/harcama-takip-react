@@ -8,7 +8,11 @@ import { useCollection } from "../../hooks/useCollection";
 
 const Home = () => {
   const { user } = useAuthContext();
-  const { docs, error } = useCollection("harcamalar");
+  const { docs, error } = useCollection(
+    "harcamalar",
+    ["uid", "==", user.uid],
+    ["createdAt", "desc"]
+  );
 
   return (
     <Container sx={{ mt: 8 }}>

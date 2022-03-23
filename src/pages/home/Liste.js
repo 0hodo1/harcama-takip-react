@@ -8,15 +8,22 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 
+import { useFirestore } from "../../hooks/useFirestore";
+
 export default function Liste({ harcamalar }) {
-  console.log(harcamalar);
+  const { deletedDoc } = useFirestore("harcamalar");
+
   return (
     <List>
       {harcamalar.map((harcama) => (
         <React.Fragment key={harcama.id}>
           <ListItem
             secondaryAction={
-              <IconButton edge="end" aria-label="delete">
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => deletedDoc(harcama.id)}
+              >
                 <DeleteIcon />
               </IconButton>
             }
